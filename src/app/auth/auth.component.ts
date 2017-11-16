@@ -27,8 +27,8 @@ export class AuthComponent {
         this.authService
             .authenticate(this.loginForm.value)
             .subscribe(
-                data => {
-                    localStorage.setItem('id_token', data.token);
+                res => {
+                    localStorage.setItem('id_token', res.token);
                     this.router.navigate(['post']);
                 },
                 error => {

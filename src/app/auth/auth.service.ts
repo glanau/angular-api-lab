@@ -1,8 +1,10 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
+import {JwtHelper} from 'angular2-jwt';
 
 @Injectable()
 export class AuthService {
+    private jwtHelper: JwtHelper = new JwtHelper();
 
     constructor(private http: HttpClient) {}
 
@@ -20,29 +22,15 @@ export class AuthService {
         localStorage.removeItem('id_token');
     }
 
-    getAuthorizationHeader() {
-        return 'Bearer ' + this.getToken();
-    }
-
     getToken() {
         return localStorage.getItem('id_token');
     }
 
+    getAuthorizationHeader() {
+        return 'Bearer ' + this.getToken();
+    }
+
     authenticated() {
-        const token = this.getToken();
-        if (!token) {
-            return false;
-        }
-
-        return !this.isTokenExpired(token);
+        return !this.jwtHelper.isTokenExpired(this.getToken());
     }
-
-    isTokenExpired(token) {
-        return Math.floor(Date.now() / 1000) + (60 * 60) > this.getTokenExpirationTime(token);
-    }
-
-    getTokenExpirationTime(token) {
-        return JSON.parse(atob(token.split('.')[1])).exp;
-    }
-
 }
